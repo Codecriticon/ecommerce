@@ -1,0 +1,4 @@
+org.springframework.test.context.ContextCustomizerFactory = com.codecriticon.\
+    ecommerce.config.TestContainersSpringContextCustomizerFactory,com.\
+    codecriticon.ecommerce.config.\
+    KafkaTestContainersSpringContextCustomizerFactory

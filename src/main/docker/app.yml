@@ -1,0 +1,46 @@
+# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+name: ecommerce
+services:
+  app:
+    image: ecommerce
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,api-docs
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
+      - SPRING_COUCHBASE_CONNECTION_STRING=couchbase
+      - JHIPSTER_DATABASE_COUCHBASE_BUCKET_NAME=ecommerce
+      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=internal
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=internal
+      - JHIPSTER_SLEEP=20
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8081/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      couchbase:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+  couchbase:
+    extends:
+      file: ./couchbase.yml
+      service: couchbase
+  keycloak:
+    extends:
+      file: ./keycloak.yml
+      service: keycloak
+  kafka:
+    extends:
+      file: ./kafka.yml
+      service: kafka
+  zookeeper:
+    extends:
+      file: ./kafka.yml
+      service: zookeeper
